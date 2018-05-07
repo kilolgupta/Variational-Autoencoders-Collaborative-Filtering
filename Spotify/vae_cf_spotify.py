@@ -5,19 +5,27 @@ from keras.layers import Input, Dense, Lambda
 from keras.models import Model
 from keras import objectives
 from keras import backend as K
-from keras.callbacks import ReduceLROnPlateau, ModelCheckpoint, Callback
+from keras.callbacks import ReduceLROnPlateau, ModelCheckpoint, Callback, EarlyStopping
 
 # encoder/decoder network size
-batch_size=300
-original_dim=2262292 # number of unique songs
+batch_size=500
+original_dim = 125000 # number of filtered songs (songs appearing in less than 46 playlists)
 intermediate_dim=600
 latent_dim=200
-nb_epochs=2
+nb_epochs=50
 epsilon_std=1.0
 
-# activation used is tanh
-# softmax activation is used at the final dense layer which produces x_reconstructed
+class LossHistory(Callback):
+    def on_train_begin(self, logs={}):
+        self.losses = []
+        self.val_losses = []
 
+    def on_epoch_end(self, epoch, logs={}):
+        self.losses.append(logs.get('loss'))
+        self.val_losses.append(logs.get('val_loss'))
+
+history = LossHistory()
+        
 # encoder network
 x=Input(batch_shape=(batch_size,original_dim))
 h=Dense(intermediate_dim, activation='tanh')(x)
@@ -50,15 +58,35 @@ vae.compile(optimizer='adam', loss=vae_loss)
 
 x_train = pickle.load( open( "train_data.file", "rb" ) )
 print("number of training playlists: ", x_train.shape[0])
+print("number of songs after filtering: ", x_train.shape[1])
 
 x_val = pickle.load( open( "val_data.file", "rb" ) )
 print("number of validation playlists: ", x_val.shape[0])
+print("number of songs in validation playlists: ", x_val.shape[1])
+
+
+def nn_batch_generator_reduced(x, y, batch_size, samples_per_epoch):
+    number_of_batches = samples_per_epoch/batch_size
+    counter=0
+    shuffle_index = np.arange(np.shape(y)[0])
+    np.random.shuffle(shuffle_index)
+    x =  x[shuffle_index, :]
+    y =  y[shuffle_index, :]
+    while 1:
+        index_batch = shuffle_index[batch_size*counter:batch_size*(counter+1)]
+        x_batch = x[index_batch,:].todense()
+        y_batch = y[index_batch,:].todense()
+        counter += 1
+        yield (np.array(x_batch),np.array(y_batch))
+        if (counter >= number_of_batches):
+            counter=0
+
 
 def nn_batch_generator(x, y, batch_size, samples_per_epoch):
     number_of_batches = samples_per_epoch/batch_size
     counter=0
     shuffle_index = np.arange(np.shape(y)[0])
-    #np.random.shuffle(shuffle_index)
+    np.random.shuffle(shuffle_index)
     x =  x[shuffle_index, :]
     y =  y[shuffle_index, :]
     while 1:
@@ -73,6 +101,14 @@ def nn_batch_generator(x, y, batch_size, samples_per_epoch):
 
 weightsPath = "./tmp/weights.hdf5"
 checkpointer = ModelCheckpoint(filepath=weightsPath, verbose=1, save_best_only=True)
-reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=5, min_lr=0.001)
-vae.fit_generator(nn_batch_generator(x_train, x_train, batch_size, 990000), samples_per_epoch=990000, nb_epoch=nb_epochs, 
-    validation_data=nn_batch_generator(x_val, x_val, batch_size, 10000), nb_val_samples=10000, callbacks=[checkpointer, reduce_lr])
+earlyStopping = EarlyStopping(monitor='val_loss', min_delta=0, patience=5, verbose=0, mode='min')
+
+# original size of training data = 9,90,000
+# sending only 1,00,000 playlists in each epoch and shuffling before every epoch so that each playlist is seen in the training
+
+vae.fit_generator(nn_batch_generator(x_train, x_train, batch_size, 100000), samples_per_epoch=100000, nb_epoch=nb_epochs, 
+    validation_data=nn_batch_generator(x_val, x_val, batch_size, 10000), nb_val_samples=10000, callbacks=[checkpointer, earlyStopping, history])
+
+
+pickle.dump(history.losses, open('train_losses.file', 'wb'))
+pickle.dump(history.val_losses, open('val_losses.file', 'wb'))
