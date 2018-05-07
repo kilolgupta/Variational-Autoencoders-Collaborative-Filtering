@@ -5,7 +5,8 @@ import random
 import pickle
 from scipy import sparse
 
-number_of_songs = 2262292
+# number_of_songs = 2262292
+number_of_songs = 125000
 
 track_count = 0
 tracks = {}
@@ -19,7 +20,10 @@ cols = []
 valid_rows = []
 valid_cols = []
 
+trackfile = pickle.load(open("trackcount.file", "rb"))
+
 for i in range(0, 1000):
+	print("----FILE------ " + str(i))
 	filename = 'mpd/data/mpd.slice.' + str(file_count) + '-' + str(file_count + 999) + '.json'
 	json_data = json.load(open(filename))
 
@@ -33,10 +37,11 @@ for i in range(0, 1000):
 	for playlist in playlists:
 		track_list = []
 		for track in playlist['tracks']:
-			if track['track_uri'] not in tracks:
-				tracks[track['track_uri']] = track_count
-				track_count += 1
-			track_list.append(tracks[track["track_uri"]])
+			if track['track_uri'] in trackfile:
+				if track['track_uri'] not in tracks:
+					tracks[track['track_uri']] = track_count
+					track_count += 1
+				track_list.append(tracks[track["track_uri"]])
 
 		if (choice):
 			valid_rows.extend(validation for i in range(len(track_list)))
