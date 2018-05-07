@@ -8,19 +8,12 @@ from keras import objectives
 from keras import backend as K
 
 
-# def measure_performance(x, x_bar):
-#     return
-
-
 # encoder/decoder network size
 batch_size=500
-original_dim=2262292 # number of movies
+original_dim=125000 # number of movies
 intermediate_dim=600
 latent_dim=200
 epsilon_std=1.0
-
-# activation used is tanh
-# softmax activation is used at the final dense layer which produces x_reconstructed
 
 # encoder network
 x=Input(batch_shape=(batch_size,original_dim))
@@ -49,35 +42,25 @@ weightsPath = "./tmp/weights.hdf5"
 vae.load_weights(weightsPath)
 
 x_test_matrix = pickle.load( open( "test_data.file", "rb" ) )
-# x_test_matrix = x_test_matrix.todense()  # 1s and 0s per user
-# x_test = np.squeeze(np.asarray(x_test_matrix))
+print("number of playlists in test data", x_test_matrix.shape[0])
+print("number of songs in test playlists", x_test_matrix.shape[1])
 
 
 def nn_batch_generator(x, batch_size, samples_per_epoch):
     number_of_batches = samples_per_epoch/batch_size
-    counter=0
     shuffle_index = np.arange(np.shape(x)[0])
-    np.random.shuffle(shuffle_index)
-    x =  x[shuffle_index, :]
-    #y =  y[shuffle_index, :]
+    counter=0
     while 1:
         index_batch = shuffle_index[batch_size*counter:batch_size*(counter+1)]
         x_batch = x[index_batch,:].todense()
-       # y_batch = y[index_batch,:].todense()
         counter += 1
-        yield (np.array(x_batch))#,np.array(y_batch))
+        yield (np.array(x_batch))
         if (counter >= number_of_batches):
             counter=0
 
 
-
-
-x_test_reconstructed = vae.predict_generator(generator=nn_batch_generator(x_test_matrix, batch_size, 10000), val_samples=x_test_matrix.shape[0])  # float values per user
-pickle.dump(x_test_reconstructed, open("x_test_reconstructed.file", "wb"))
-
-# generate predictions using x_test_reconstructed
-
-def check_song_in_playlist(test_playlist_id, song_id) :
-	return true # or false
-
-
+x_test_reconstructed = vae.predict_generator(generator=nn_batch_generator(x_test_matrix, batch_size, 10000), val_samples=x_test_matrix.shape[0])
+print(type(x_test_reconstructed))
+print(len(x_test_reconstructed))
+print(x_test_reconstructed[0])
+pickle.dump(x_test_reconstructed, open("x_test_reconstructed.file", "wb"), protocol=4)
