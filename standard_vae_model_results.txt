@@ -1,0 +1,63 @@
+Approach 1
+
+fold-1
+recall@20: 0.5361947618247523
+recall@50: 0.5631774940667692
+ndcg@100:  0.2724007829543391
+
+fold-2
+recall@20:  0.5399664609063171
+recall@50   0.56542322335807
+ndcg@100:  0.27541021400623394
+
+fold-3
+recall@20:  0.5375343986736952
+recall@50:  0.5698594621594564
+ndcg@100:  0.27567425682388574
+
+recall@20- mean: 0.53686458, stddev: 0.00067
+recal@50- mean: 0.566518478, stddev: 0.0033
+ndcg@100- mean: 0.27403752, stddev: 0.0016
+
+------------------------------------------------------------------------------------------------------
+
+Approach 2
+
+fold-1
+recall@20: 0.20603333875751115
+recall@50: 0.364723130654524
+ndcg@100:  0.15851297473345
+
+
+fold-2
+recall@20:  0.20715624463122
+recall@50   0.36350998713467
+ndcg@100:  0.15670241651531513
+
+
+fold-3
+recall@20:  0.2026753411889
+recall@50:  0.3620999812169
+ndcg@100:  0.1522099753781
+
+
+
+recall@20- mean: 0.205288308193, stddev: 0.001903667832
+recal@50- mean: 0.363444366335, stddev: 0.00107190105576
+ndcg@100- mean: 0.155808455542, stddev: 0.00264969493645
+
+
+------------------------------------------------------------------------------------------------------
+
+mean is rounded off till 3 decimal places
+testing approach 1 is where we obtained the metrics over all the movies which test users had marked 1, approach 2 is when the 20% of the movies which were marked 1 were set off to 0 and then metrics were calculated using only those
+
+standard vae results using testing approach 1 on movielens, mean stddev over 3 CVs
+recall@20- mean: 0.537, stddev: 0.00067
+recal@50- mean: 0.567, stddev: 0.0033
+ndcg@100- mean: 0.274, stddev: 0.0016
+
+standard vae results using testing approach 2 on movielens, mean stddev over 3 CVs
+recall@20- mean: 0.205, stddev: 0.0019
+recal@50- mean: 0.363, stddev: 0.00107
+ndcg@100- mean: 0.156, stddev: 0.0026
