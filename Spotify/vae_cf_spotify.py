@@ -65,23 +65,6 @@ print("number of validation playlists: ", x_val.shape[0])
 print("number of songs in validation playlists: ", x_val.shape[1])
 
 
-def nn_batch_generator_reduced(x, y, batch_size, samples_per_epoch):
-    number_of_batches = samples_per_epoch/batch_size
-    counter=0
-    shuffle_index = np.arange(np.shape(y)[0])
-    np.random.shuffle(shuffle_index)
-    x =  x[shuffle_index, :]
-    y =  y[shuffle_index, :]
-    while 1:
-        index_batch = shuffle_index[batch_size*counter:batch_size*(counter+1)]
-        x_batch = x[index_batch,:].todense()
-        y_batch = y[index_batch,:].todense()
-        counter += 1
-        yield (np.array(x_batch),np.array(y_batch))
-        if (counter >= number_of_batches):
-            counter=0
-
-
 def nn_batch_generator(x, y, batch_size, samples_per_epoch):
     number_of_batches = samples_per_epoch/batch_size
     counter=0
