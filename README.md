@@ -2,7 +2,7 @@
 This repository contains the code implementing variational autoencoders (VAE) for collaborative filtering (CF) on movielens data and spotify's Million Playlist dataset (MPD).
 
 **Link to movielens data**: http://files.grouplens.org/datasets/movielens/ml-20m.zip
-For movielens dataset, we couldn't use the ratings.csv file directly as it had some movies which IMDB didn't understand, and hence created new_ratings.csv. The code for this filtering is in:  %mukund add the file%
+For movielens dataset, we couldn't use the ratings.csv file directly as it had some movies which IMDB didn't understand, and hence created new_ratings.csv. The code for this filtering is in:  update_ratings.py
 
 **Million Playlist Dataset**-  official website hosted at https://recsys-challenge.spotify.com/
 One needs to register on the website and download the training data and the test data (challenge set) as part of the recsys 2018 playlist completion challenge.
