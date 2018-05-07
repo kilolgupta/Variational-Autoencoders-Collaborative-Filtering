@@ -11,6 +11,6 @@ One needs to register on the website and download the training data and the test
 
 **The folder ./Standard** contains the code for the implementation of standard VAE model.
 
-**The folder ./Spotify** contains the code for generating recommendations for the playlists in the challenge/test set.
+**The folder ./Spotify** contains the code used for playlist completion challenge, from data preprocessing, training and generating predictions.
 
 Please look into the specific folder to read more about the files that were used for the specific implementation.
