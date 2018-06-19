@@ -25,7 +25,7 @@ batch_size=500
 original_dim=26621 # number of movies
 intermediate_dim=600
 latent_dim=200
-nb_epochs=2
+nb_epochs=20
 epsilon_std=1.0
 
 
