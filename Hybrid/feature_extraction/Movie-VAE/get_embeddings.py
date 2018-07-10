@@ -10,7 +10,7 @@ from keras import backend as K
 batch_size=1
 original_dim=1128
 intermediate_dim=50
-latent_dim=2
+latent_dim=3
 epsilon_std=1.0
 
 x=Input(batch_shape=(batch_size,original_dim))
