@@ -53,9 +53,9 @@ x_decoded = x_bar(h_decoded)
 # build and compile model
 vae = Model(x, x_decoded)
 def vae_loss(x,x_bar):
-    neg_ll = -K.sum(x_bar, x, axis=-1)
-    kl_loss = 0.5*K.sum(K.square(z_mean) + K.exp(z_log_var) - z_log_var -1, axis=-1)
-    return K.mean(neg_ll + kl_loss)
+    reconst_loss=original_dim*objectives.binary_crossentropy(x, x_bar)
+    kl_loss= -0.5*K.sum(1 + z_log_var - K.square(z_mean) - K.exp(z_log_var), axis=-1)
+    return kl_loss + reconst_loss
 
 vae.compile(optimizer='adam', loss=vae_loss)
 
