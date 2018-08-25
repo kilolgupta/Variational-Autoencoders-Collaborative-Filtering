@@ -1,4 +1,4 @@
-# Variational-Autoencoders-Collaborative-Filitering
+# Variational-Autoencoders-Collaborative-Filtering
 This repository contains the code implementing variational autoencoders (VAE) for collaborative filtering (CF) on movielens data and spotify's Million Playlist dataset (MPD).
 
 **Link to movielens data**: http://files.grouplens.org/datasets/movielens/ml-20m.zip
